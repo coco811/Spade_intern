@@ -34,3 +34,6 @@ if __name__ == '__main__':
     times = pr_nc_file.variables['time']
     vtimes = num2date(times[:], units=times.units)
     print(f'{vtimes[0]}')
+
+    times = pr_nc_file.variables['time'][:]
+    idx = pd.date_range(start='2019-04-15 01:0:00', freq='H', periods=len(times))
