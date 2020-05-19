@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sea
-
+import pandas as pan 
 
 
 if __name__ == '__main__':
