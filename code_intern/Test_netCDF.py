@@ -27,6 +27,15 @@ import matplotlib.ticker as ticker
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
 
+
+# plt.figure()
+    # plt.title(f"\n Graph d'essaie du plot des températures au temps zéros\n")
+    # ax = sea.heatmap(tempe_0, cmap='coolwarm')
+    # ax.set_xlabel('Longitude [modifie les graduations later] ')
+    # ax.set_ylabel('Latitude [modifie les graduations later]')
+    # plt.show()
+
+
 if __name__ == '__main__':
     pr_nc_file = cdf4_ds('/Users/olivier1/Documents/Data_stage/pr_CA_Rockies_3km_P3_ERA5-1h_ISBA_USGS.nc')  # file shape[time, lat, lon]
     tas_nc_file = cdf4_ds('/Users/olivier1/Documents/Data_stage/tas_CA_Rockies_3km_P3_ERA5-1h_ISBA_USGS.nc')
