@@ -14,17 +14,10 @@ states_provinces = cfeature.NaturalEarthFeature(
     scale='50m',
     facecolor='none')
 
-
-
-# tas_nc_file = cdf4_ds('/Users/olivier1/Documents/Data_stage/tas_CA_Rockies_3km_P3_ERA5-1h_ISBA_USGS.nc')
-# lats = tas_nc_file.variables['lat'][:, :]
-# lons = tas_nc_file.variables['lon'][:, :]
-
-
 class plot_graph():
-    def __init__(self, data, time=None):
+    def __init__(self, data,**kwargs):
         self.data = data
-        self.time = time 
+        self.tiume = kwargs.get("time", 0)
         self.domaine={}
         self.Cen_lat = 0
         self.Cen_lon = 0
@@ -108,6 +101,13 @@ class plot_graph():
         self.Cen_lat = self.domaine['LL_lat'] + ((self.domaine['UL_lat'] - self.domaine['LL_lat']) / 2)
         self.Cen_lon = self.domaine['LL_lon'] + ((abs(self.domaine['LL_lon']) - abs(self.domaine['LR_lon'])) / 2)
         self.extent = [self.domaine['UL_lon'], self.domaine['LR_lon'], self.domaine['LL_lat'], self.domaine['UR_lat']]
+
+    def get_mean(self):
+        pass
+        # check mean sur l'axis
+
+    def get_slice(self):
+        pass 
 
     def plot_temp_heatmap(self):
 
