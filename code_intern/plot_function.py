@@ -14,6 +14,7 @@ except ImportError:  # python 3.x
 rivers = cfeature.NaturalEarthFeature(
     category='physical', name='rivers_lake_centerlines',
     scale='10m', facecolor='none', edgecolor='blue')
+
 states_provinces = cfeature.NaturalEarthFeature(
     category='cultural',
     name='admin_1_states_provinces_lines',
@@ -136,6 +137,7 @@ class plot_graph():
 
         ax.add_feature(states_provinces, edgecolor='black', linewidth=.5)
         ax.add_feature(cfeature.BORDERS, linewidth=0.5)
+        # ax.add_feature(rivers, linewidth=0.5)
         ax.coastlines('10m', edgecolor='black', linewidth=.5)
         x_lines = np.arange(180, -180, -10)
         y_lines = np.arange(0, 90, 10)
