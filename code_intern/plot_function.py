@@ -17,7 +17,7 @@ states_provinces = cfeature.NaturalEarthFeature(
 class plot_graph():
     def __init__(self, data,**kwargs):
         self.data = data
-        self.tiume = kwargs.get("time", 0)
+        self.time = kwargs.get("time", None)
         self.domaine={}
         self.Cen_lat = 0
         self.Cen_lon = 0
@@ -84,17 +84,17 @@ class plot_graph():
         ax.set_yticklabels(y_lats_labels, fontsize=tick_fs)
 
     def get_temp(self):
+        """
+        :return: the tempereture data at a specific time
+        """
         tempe = self.data['tas'][self.time, :, :] - 273.15
         return tempe
 
-
-    def grid_hetamap_rpole(self):
-        lat_rpole = self.data['lat'][:]
-        lon_rpole = self.data['lon'][:]
-        Lon, Lat = np.meshgrid(lon_rpole, lat_rpole)
-        return Lon, Lat
-
     def get_domaine(self):
+        """
+
+        :return: get the domaine of the heatmap from the data
+        """
         lats = self.data.variables['lat'][:, :]
         lons = self.data.variables['lon'][:, :]
         self.domaine = {'LL_lat':lats[0][0] , 'LL_lon':lons[0][0],'UL_lat':lats[-1][0], 'UL_lon': lons[-1][0],'LR_lat':lats[0][-1], 'LR_lon':lons[0][-1],'UR_lat':lats[-1][-1], 'UR_lon' :lons[-1][-1]}
@@ -102,14 +102,24 @@ class plot_graph():
         self.Cen_lon = self.domaine['LL_lon'] + ((abs(self.domaine['LL_lon']) - abs(self.domaine['LR_lon'])) / 2)
         self.extent = [self.domaine['UL_lon'], self.domaine['LR_lon'], self.domaine['LL_lat'], self.domaine['UR_lat']]
 
-    def get_mean(self):
-        pass
-        # check mean sur l'axis
+    def get_mean_temp(self):
+        """
+        :return: array lon/lat of mean temperature value
+        """
+        tempe=np.mean(self.data['tas'][:,:,:],axis=0)
+        return tempe
+
 
     def get_slice(self):
+        """
+        :return: array of the slice in x and y
+        """
         pass 
 
     def plot_temp_heatmap(self):
+        '''
+        :return: plot the heatmap of the temperature
+        '''
 
         fig = plt.figure(  facecolor='white')
         ax = plt.subplot(projection=self.map_proj)
@@ -131,8 +141,13 @@ class plot_graph():
         small_y = [self.small_domaine['smallLL_lat'], self.small_domaine['smallUL_lat'], self.small_domaine['smallUR_lat'], self.small_domaine['smallLR_lat'], self.small_domaine['smallLL_lat']]
         ax.plot(small_x, small_y, marker='o', markersize=.5, color='k', linewidth=.75, linestyle='--',
                 transform=self.data_proj)
+        if self.time !=None:
+            heat_data = self.get_temp()
+        else:
+            heat_data = self.get_mean_temp()
+            print(heat_data)
 
-        heat_data = self.get_temp()
+
         cn = ax.contourf(self.data['lon'][:], self.data['lat'][:], heat_data, cmap='coolwarm', transform=self.data_proj)
         colorbar=plt.colorbar(cn, ax=ax,)
         colorbar.set_label('Temperature \u2103', rotation=270)
