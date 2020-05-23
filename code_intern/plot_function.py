@@ -110,8 +110,8 @@ class plot_graph():
         :return: array lon/lat of mean temperature value
         """
 
-        with open('mouvement_avec_neptune.p', 'rb') as fp:
-            tempe_moy = pickle.load(fp)
+        with open('Array_mean_temp', 'rb') as fp:
+            tempe_moy = pickle.load(fp)-273
 
         return tempe_moy
 
