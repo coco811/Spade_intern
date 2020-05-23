@@ -8,6 +8,9 @@ try:
     import cPickle as pickle
 except ImportError:  # python 3.x
     import pickle
+
+
+
 rivers = cfeature.NaturalEarthFeature(
     category='physical', name='rivers_lake_centerlines',
     scale='10m', facecolor='none', edgecolor='blue')
@@ -127,8 +130,8 @@ class plot_graph():
         :return: plot the heatmap of the temperature
         '''
 
-        fig = plt.figure(  facecolor='white')
-        ax = plt.subplot(projection=self.map_proj)
+        fig = plt.figure(facecolor='white')
+        ax = plt.subplot(1,1,1,projection=self.map_proj)
         ax.set_extent([self.extent[0] - 0.5, self.extent[1] + 0.5, self.extent[2] - 0.5, self.extent[3] + 0.5], self.data_proj)
 
         ax.add_feature(states_provinces, edgecolor='black', linewidth=.5)
