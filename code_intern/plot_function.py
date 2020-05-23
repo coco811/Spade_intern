@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 from netCDF4 import Dataset as cdf4_ds
-
+try:
+    import cPickle as pickle
+except ImportError:  # python 3.x
+    import pickle
 rivers = cfeature.NaturalEarthFeature(
     category='physical', name='rivers_lake_centerlines',
     scale='10m', facecolor='none', edgecolor='blue')
@@ -106,8 +109,11 @@ class plot_graph():
         """
         :return: array lon/lat of mean temperature value
         """
-        tempe=np.mean(self.data['tas'][:,:,:],axis=0)
-        return tempe
+
+        with open('mouvement_avec_neptune.p', 'rb') as fp:
+            tempe_moy = pickle.load(fp)
+
+        return tempe_moy
 
 
     def get_slice(self):
