@@ -8,7 +8,8 @@ try:
     import cPickle as pickle
 except ImportError:  # python 3.x
     import pickle
-
+import pandas as pd
+from netCDF4 import num2date
 
 
 rivers = cfeature.NaturalEarthFeature(
@@ -25,6 +26,8 @@ class plot_graph():
     def __init__(self, data,**kwargs):
         self.data = data
         self.time = kwargs.get("time", None)
+        self.event = kwargs.get('event',False)
+        self.save= kwargs.get("save", True)
         self.domaine={}
         self.Cen_lat = 0
         self.Cen_lon = 0
@@ -37,7 +40,7 @@ class plot_graph():
         self.data_proj = ccrs.PlateCarree()
         self.rotated_pole_proj = ccrs.RotatedPole(pole_latitude=data['rotated_pole'].grid_north_pole_latitude,
                                                   pole_longitude=-data['rotated_pole'].grid_north_pole_longitude)
-
+        self.i=0
 
 
     def cartopy_xlabel(self, ax, x_lons, myproj, tick_fs):
@@ -90,12 +93,6 @@ class plot_graph():
         ax.set_yticks(y_lats_xy)
         ax.set_yticklabels(y_lats_labels, fontsize=tick_fs)
 
-    def get_temp(self):
-        """
-        :return: the tempereture data at a specific time
-        """
-        tempe = self.data['tas'][self.time, :, :] - 273.15
-        return tempe
 
     def get_domaine(self):
         """
@@ -114,11 +111,39 @@ class plot_graph():
         :return: array lon/lat of mean temperature value
         """
 
-        with open('Array_mean_temp', 'rb') as fp:
+        with open('../Stock_array/Array_mean_temp', 'rb') as fp:
             tempe_moy = pickle.load(fp)-273
 
         return tempe_moy
 
+    def nearest_ind(self,items, pivot):
+        time_diff = np.abs([date - pivot for date in items])
+        return time_diff.argmin()
+
+    def get_index_storm(self):
+        start = []
+        finish = []
+        df = pd.read_csv("dates_of_storms.csv", parse_dates=True)
+        for i in range(len(df['number'])):
+            debut = df['start'][df['number'][i] - 1]
+            fin = df['finish'][df['number'][i] - 1]
+            times = self.data.variables['time'][:]
+            idx = pd.date_range(start='2019-04-15 01:00:00', freq='H', periods=len(times))
+            times = self.data.variables['time']
+            vtimes = num2date(times[:], units=times.units)
+            index_start = self.nearest_ind(vtimes, pd.Timestamp(debut))
+            index_finish = self.nearest_ind(vtimes, pd.Timestamp(fin))
+            start.append(int(index_start))
+            finish.append(int(index_finish))
+        return start,finish
+
+    def get_mean_temp_event(self,start,finish,number):
+        # tempe_moy_event = np.mean(self.data['tas'][start:finish, :, :], axis=0)
+        # with open(f'Array_mean_temp_event{number+1}', 'wb') as fp:
+        #     pickle.dump(tempe_moy_event, fp, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(f'../Stock_array/Array_mean_temp_event{number+1}', 'rb') as fp:
+            tempe_moy_event = pickle.load(fp)-273
+        return tempe_moy_event
 
     def get_slice(self):
         """
@@ -126,7 +151,7 @@ class plot_graph():
         """
         pass 
 
-    def plot_temp_heatmap(self):
+    def plot_temp_heatmap(self,heat_data):
         '''
         :return: plot the heatmap of the temperature
         '''
@@ -152,26 +177,39 @@ class plot_graph():
         small_y = [self.small_domaine['smallLL_lat'], self.small_domaine['smallUL_lat'], self.small_domaine['smallUR_lat'], self.small_domaine['smallLR_lat'], self.small_domaine['smallLL_lat']]
         ax.plot(small_x, small_y, marker='o', markersize=.5, color='k', linewidth=.75, linestyle='--',
                 transform=self.data_proj)
-        if self.time !=None:
-            heat_data = self.get_temp()
-        else:
-            heat_data = self.get_mean_temp()
-            print(heat_data)
+
 
 
         cn = ax.contourf(self.data['lon'][:], self.data['lat'][:], heat_data, cmap='coolwarm', transform=self.data_proj)
-        colorbar=plt.colorbar(cn, ax=ax,)
-        colorbar.set_label('Temperature \u2103', rotation=270)
-
+        colorbar=plt.colorbar(cn, ax=ax)
+        colorbar.set_label('Temperature [\u2103]', rotation=270,fontsize=10,labelpad=10)
+        colorbar.ax.tick_params(labelsize=7)
         x_labels = np.arange(-80, -150, -10)  # want these longitudes as tick positions
         y_labels = np.arange(30, 65, 10) #  want these latitudes as tick positions
-        tick_fs = 12
+        tick_fs = 10
         self.cartopy_xlabel(ax, x_labels, self.map_proj, tick_fs)
         self.cartopy_ylabel(ax, y_labels, self.map_proj, tick_fs)
 
-        ax.set_title('SPADE simulation domain', loc='left', fontsize=8)
-        ax.set_title('VALID: 15-04-2019', loc='right', fontsize=8)
+        if self.event==True:
+            ax.set_title(f'SPADE simulation domain \nevent #{self.i+1} ', loc='left', fontsize=8)
+            ax.set_title('VALID: 15-04-2019', loc='right', fontsize=8)
+            if self.save == True:
+                plt.savefig(f'mean_temp_event{self.i+1}.pdf', bbox_inches='tight')
+        else:
+            ax.set_title('SPADE simulation domain', loc='left', fontsize=8)
+            ax.set_title('VALID: 15-04-2019', loc='right', fontsize=8)
+
+            if self.save==True:
+                plt.savefig('mean_temp.pdf', bbox_inches='tight')
 
 
-        plt.show()
-
+    def __call__(self):
+        if self.event == True:
+            start, finish = self.get_index_storm()
+            for i in range(len(start)):
+                self.i=i
+                heat_data = self.get_mean_temp_event(start[i],finish[i],i)
+                self.plot_temp_heatmap(heat_data)
+        else:
+            heat_data = self.get_mean_temp()
+            self.plot_temp_heatmap(heat_data)
