@@ -37,9 +37,7 @@ if __name__ == '__main__':
 
     times = tas_nc_file.variables['time']
     vtimes = num2date(times[:], units=times.units)
-    print(f'{vtimes}')
+    print(type(f'{vtimes[0]}'))
     times = tas_nc_file.variables['time'][:]
     idx = pd.date_range(start='2019-04-15 01:0:00', freq='H', periods=len(times))
     print(idx.date[:])
-    index = (idx == pd.Timestamp('04-05-2019 17:00:00')).argmax()
-    print(index)

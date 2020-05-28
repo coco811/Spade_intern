@@ -128,8 +128,6 @@ class plot_graph():
         for i in range(len(df['number'])):
             debut = df['start'][df['number'][i] - 1]
             fin = df['finish'][df['number'][i] - 1]
-            times = self.data.variables['time'][:]
-            idx = pd.date_range(start='2019-04-15 01:00:00', freq='H', periods=len(times))
             times = self.data.variables['time']
             vtimes = num2date(times[:], units=times.units)
             index_start = self.nearest_ind(vtimes, pd.Timestamp(debut))
@@ -143,7 +141,7 @@ class plot_graph():
         # with open(f'Array_mean_temp_event{number+1}', 'wb') as fp:
         #     pickle.dump(tempe_moy_event, fp, protocol=pickle.HIGHEST_PROTOCOL)
         with open(f'../Stock_array/Array_mean_temp_event{number+1}', 'rb') as fp:
-            tempe_moy_event = pickle.load(fp)-273
+            tempe_moy_event = pickle.load(fp)-273.15
         return tempe_moy_event
 
     def get_slice(self):

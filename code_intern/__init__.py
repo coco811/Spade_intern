@@ -20,9 +20,9 @@ def get_mean_calc(data):
 if __name__ == '__main__':
     "plot temps simulation"
 
-    # tas_nc_file = cdf4_ds('/Users/olivier1/Documents/Data_stage/tas_CA_Rockies_3km_P3_ERA5-1h_ISBA_USGS.nc')
-
+    tas_nc_file = cdf4_ds('/Users/olivier1/Documents/Data_stage/tas_CA_Rockies_3km_P3_ERA5-1h_ISBA_USGS.nc')
+    # print(tas_nc_file.variables)
     # plt_int.plot_graph(tas_nc_file,event=True,save=True).__call__()
 
-    Ana_data.data_site('Alldata.csv').__call__()
+    Ana_data.data_site('Alldata.csv',tas_nc_file).__call__()
 
