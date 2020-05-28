@@ -157,7 +157,7 @@ class plot_graph():
         :return: plot the heatmap of the temperature
         '''
 
-        fig = plt.figure(facecolor='white')
+        fig = plt.figure(facecolor='white',figsize=(10,4), dpi=300)
         ax = plt.subplot(1,1,1,projection=self.map_proj)
         ax.set_extent([self.extent[0] - 0.5, self.extent[1] + 0.5, self.extent[2] - 0.5, self.extent[3] + 0.5], self.data_proj)
 
@@ -179,10 +179,10 @@ class plot_graph():
         ax.plot(small_x, small_y, marker='o', markersize=.5, color='k', linewidth=.75, linestyle='--',
                 transform=self.data_proj)
 
-        levels = np.arange(-30, 31, 1)
-        levels_tick = np.arange(-30, 31, 5)
+        levels = np.arange(-40, 41, 1)
+        levels_tick = np.arange(-40, 41, 5)
         cn = ax.contourf(self.data['lon'][:], self.data['lat'][:], heat_data, cmap='coolwarm', transform=self.data_proj,levels=levels)
-        colorbar=plt.colorbar(cn, ax=ax,pad=0.05, aspect=50, shrink=.6, extend='Max',ticks=levels_tick)
+        colorbar=plt.colorbar(cn, ax=ax,pad=0.05, aspect=50, shrink=.75, extend='Max',ticks=levels_tick)
         colorbar.set_label('Temperature [\u2103]', rotation=270,fontsize=10,labelpad=11)
         colorbar.ax.tick_params(labelsize=7)
         x_labels = np.arange(-80, -150, -10)  # want these longitudes as tick positions
@@ -190,17 +190,17 @@ class plot_graph():
         tick_fs = 10
         self.cartopy_xlabel(ax, x_labels, self.map_proj, tick_fs)
         self.cartopy_ylabel(ax, y_labels, self.map_proj, tick_fs)
+        ax.set_title('VALID: 15-04-2019', loc='right', fontsize=8)
         ax.set_title(f'SPADE simulation domain  ', loc='left', fontsize=8)
         if self.event==True:
-            ax.set_title('VALID: 15-04-2019', loc='right', fontsize=8)
             if self.save == True:
-                plt.savefig(f'mean_temp_event{self.i+1}.pdf', bbox_inches='tight')
+                plt.savefig(f'mean_temp_event{self.i+1}.png', bbox_inches='tight')
+                plt.savefig(f'mean_temp_event{self.i + 1}.pdf', bbox_inches='tight')
             else:
                 plt.show()
         else:
-            ax.set_title('VALID: 15-04-2019', loc='right', fontsize=8)
-
             if self.save==True:
+                plt.savefig('mean_temp.png', bbox_inches='tight')
                 plt.savefig('mean_temp.pdf', bbox_inches='tight')
             else:
                 plt.show()
