@@ -76,7 +76,7 @@ class data_site():
         return idx
 
     def get_time_temps_lenght(self):
-        df = pd.read_csv('Hourly_data.csv', parse_dates=['Date'])
+        df = pd.read_csv('/Users/olivier1/Documents/GitHub/Spade_intern/pluvio_data_analyse/Hourly_data.csv.nosync.csv', parse_dates=['Date'])
         array_simul=self.date()
         start=np.where(array_simul==df['Date'][0])[0][0]
 
@@ -90,12 +90,12 @@ class data_site():
 
     def plot(self):
         site = ['Fortress', 'junction', 'Nipika']
-        df = pd.read_csv('Hourly_data.csv', parse_dates=['Date'])
+        df = pd.read_csv('/Users/olivier1/Documents/GitHub/Spade_intern/pluvio_data_analyse/Hourly_data.csv.nosync.csv', parse_dates=['Date'])
         for i in range(len(self.data_simul_3_site)):
             fig = plt.figure(facecolor='white', figsize=(10, 4), dpi=300)
             ax = plt.subplot(1, 1, 1)
 
-            event = pd.read_csv("dates_of_storms.csv", parse_dates=True)
+            event = pd.read_csv("dates_of_storms.csv.nosync.csv", parse_dates=True)
             for j in range(len(event['number'])):
                 debut = event['start'][event['number'][j] - 1]
                 fin = event['finish'][event['number'][j] - 1]

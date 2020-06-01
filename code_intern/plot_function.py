@@ -124,7 +124,7 @@ class plot_graph():
     def get_index_storm(self):
         start = []
         finish = []
-        df = pd.read_csv("dates_of_storms.csv", parse_dates=True)
+        df = pd.read_csv("dates_of_storms.csv.nosync.csv", parse_dates=True)
         for i in range(len(df['number'])):
             debut = df['start'][df['number'][i] - 1]
             fin = df['finish'][df['number'][i] - 1]
