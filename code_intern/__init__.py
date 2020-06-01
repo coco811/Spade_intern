@@ -8,7 +8,24 @@ try:
     import cPickle as pickle
 except ImportError:  # python 3.x
     import pickle
-
+import pandas as pd
+import datetime
+import csv
+def get_precipitation_doc():
+    Nipika= pd.read_csv('../pluvio_data_analyse/Geonor_nipika.csv.nosync.csv', parse_dates=['Date'])
+    junction = pd.read_csv('../pluvio_data_analyse/Pluvio_Junction_pro.csv.nosync.csv', parse_dates=['Date'])
+    powerline = pd.read_csv('../pluvio_data_analyse/Pluvio_powerline.csv.nosync.csv', parse_dates=['Date'])
+    doc=[Nipika ,junction,powerline]
+    doc_name = ['Nipika', 'junction', 'Fortress']
+    for i in range(len(doc)):
+        diff = doc[i]['Acc'].diff(periods=1)
+        with open(f'Hourly_data_pr_{str(doc_name[i])}.csv.nosync', 'w', newline='') as file:
+            writer = csv.writer(file)
+            head = ["Date",'Acc']
+            writer.writerow(head)
+            for j in range(len(diff)):
+                data = [doc[i]['Date'][j],diff[j]]
+                writer.writerow(data)
 
 
 def get_mean_calc(data):
@@ -20,9 +37,15 @@ def get_mean_calc(data):
 if __name__ == '__main__':
     "plot temps simulation"
 
-    tas_nc_file = cdf4_ds('/Users/olivier1/Documents/Data_stage/tas_CA_Rockies_3km_P3_ERA5-1h_ISBA_USGS.nc')
+    # get_precipitation_doc()
+
+
+
+    pr_nc_file = cdf4_ds('/Users/olivier1/Documents/Data_stage/pr_CA_Rockies_3km_P3_ERA5-1h_ISBA_USGS.nc.nosync')
+    # tas_nc_file = cdf4_ds('/Users/olivier1/Documents/Data_stage/tas_CA_Rockies_3km_P3_ERA5-1h_ISBA_USGS.nc')
+    print(pr_nc_file.variables)
     # print(tas_nc_file.variables)
     # plt_int.plot_graph(tas_nc_file,event=True,save=True).__call__()
 
-    Ana_data.data_site('Alldata.csv',tas_nc_file).__call__()
+    # Ana_data.data_site('Alldata.csv',tas_nc_file,Data_aff='temperature').__call__()
 
