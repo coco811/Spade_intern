@@ -4,7 +4,9 @@ from code_intern import plot_function as plt_func
 idex_temps=[]
 import datetime
 import numpy as np
+import scipy.stats.mstats as stat
 from netCDF4 import num2date
+import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 try:
@@ -86,8 +88,33 @@ class data_site():
 
 
 
+    def scatter_plot(self):
+        site = ['Fortress', 'junction', 'Nipika']
+        df = pd.read_csv('/Users/olivier1/Documents/GitHub/Spade_intern/pluvio_data_analyse/Hourly_data.csv.nosync.csv',
+                         parse_dates=['Date'])
+        for i in range(len(self.data_simul_3_site)):
+            fig = plt.figure(facecolor='white')
+            ax = plt.subplot(1, 1, 1)
+            ax.scatter(self.data_simul_3_site[i],df[f'T {site[i]}'],label='original data')
+            y=df[f'T {site[i]}']
+            x=self.data_simul_3_site[i]
+            X = sm.add_constant(x)
+            model = sm.OLS(y, X, missing='drop')
+            results = model.fit()
+            print(results.summary())
+            plt.plot(self.data_simul_3_site[i],self.data_simul_3_site[i]*results.params[1]+results.params[0], 'r', label='fitted line')
+            plt.text(-5, 20,f'R$^2$={results.rsquared:.3f}')
+            ax.set_xlabel(f'Simulation temperature {site[i]} (\u2103)')
+            ax.set_ylabel(f'Temperature {site[i]} (\u2103)')
+            ax.set_ylim([-15, 30])
+            ax.set_xlim([-15, 30])
+            plt.legend(loc='upper left')
 
 
+            plt.savefig(f'Analyse_scatter_fit_{site[i]}_lowres.nosync.png', bbox_inches='tight')
+
+            # slope, intercept, r_value, p_value, std_err = stat.linregress(self.data_simul_3_site[i],df[f'T {site[i]}'])
+            # plt.plot(self.data_simul_3_site[i], intercept + slope * self.data_simul_3_site[i], 'r', label='fitted line')
     def plot(self):
         site = ['Fortress', 'junction', 'Nipika']
         df = pd.read_csv('/Users/olivier1/Documents/GitHub/Spade_intern/pluvio_data_analyse/Hourly_data.csv.nosync.csv', parse_dates=['Date'])
@@ -100,7 +127,6 @@ class data_site():
                 debut = event['start'][event['number'][j] - 1]
                 fin = event['finish'][event['number'][j] - 1]
                 plt.axvspan(mdates.datestr2num([debut]),mdates.datestr2num([fin]), color='grey', alpha=0.2)
-
 
             ax.xaxis.set_major_formatter(mdates.DateFormatter("%d/%m"))
             ax.xaxis.set_minor_formatter(mdates.DateFormatter("%d/%m"))
@@ -142,7 +168,8 @@ class data_site():
             self.get_site_index()
             self.get_array_simul()
             self.get_time_temps_lenght()
-            self.plot()
+            # self.plot()
+            self.scatter_plot()
         if self.data_aff == 'precipitation':
             self.read_data_site()
             # self.write_new_csv_hourly()
