@@ -37,7 +37,6 @@ class plot_graph():
         self.get_domaine()
         self.small_domaine = {'smallLL_lat': 50.5, 'smallLL_lon': -116.5, 'smallUL_lat': 51.5, 'smallUL_lon': -116.5,
                               'smallLR_lat': 50.5,'smallLR_lon': -114.5, 'smallUR_lat': 51.5, 'smallUR_lon': -114.5}
-
         self.map_proj = ccrs.LambertConformal(central_latitude=self.Cen_lat, central_longitude=self.Cen_lon)
         self.data_proj = ccrs.PlateCarree()
         self.rotated_pole_proj = ccrs.RotatedPole(pole_latitude=data['rotated_pole'].grid_north_pole_latitude,
