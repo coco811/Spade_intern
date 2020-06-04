@@ -94,16 +94,20 @@ class data_site():
                          parse_dates=['Date'])
         for i in range(len(self.data_simul_3_site)):
             fig = plt.figure(facecolor='white')
+            # fig = plt.figure(facecolor='white',figsize=(10,10), dpi=300)
             ax = plt.subplot(1, 1, 1)
-            ax.scatter(self.data_simul_3_site[i],df[f'T {site[i]}'],label='original data')
+
             y=df[f'T {site[i]}']
             x=self.data_simul_3_site[i]
             X = sm.add_constant(x)
             model = sm.OLS(y, X, missing='drop')
             results = model.fit()
-            print(results.summary())
+
             plt.plot(self.data_simul_3_site[i],self.data_simul_3_site[i]*results.params[1]+results.params[0], 'r', label='fitted line')
-            plt.text(-5, 20,f'R$^2$={results.rsquared:.3f}')
+            plt.plot(self.data_simul_3_site[i], self.data_simul_3_site[i], 'k',
+                     label='1:1')
+            ax.scatter(self.data_simul_3_site[i], df[f'T {site[i]}'], label='original data')
+            plt.text(-7, 16,f'R$^2$={results.rsquared:.3f}')
             ax.set_xlabel(f'Simulation temperature {site[i]} (\u2103)')
             ax.set_ylabel(f'Temperature {site[i]} (\u2103)')
             ax.set_ylim([-15, 30])
