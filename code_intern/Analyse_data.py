@@ -25,7 +25,8 @@ class data_site():
         self.index_site = []
         self.data_simul_3_site = []
         self.data_aff = kwargs.get("Data_aff", 'temperature')
-
+        self.topo=np.load('SPADE_dm_array.npy')
+        self.topo_site={'Fortress':2076, 'junction':1580, 'Nipika':1087}
 
     def read_data_site(self):
         self.df = pd.read_csv(self.file, parse_dates=True)
@@ -52,11 +53,18 @@ class data_site():
     def get_site_index(self):
         lon=self.data['lon'][:]
         lat=self.data['lat'][:]
-        for i in self.position_site:
-            array_near =np.sqrt( np.square( lat - i[0] ) +  np.square( lon - i[1]  ) )
+        site = ['Fortress', 'junction', 'Nipika']
+        for i in range(len(self.position_site)):
+            array_near =np.sqrt( np.square( lat - self.position_site[i][0] ) +  np.square( lon - self.position_site[i][1]  ) )
             idx = np.where( array_near == array_near.min())
-            self.index_site.append((idx[0][0],idx[1][0]))
 
+            topo=self.topo[idx[0][0]-3:idx[0][0]+3,idx[1][0]-3:idx[1][0]+3]
+            # print(topo)
+            altitude = self.topo_site[site[i]]
+            array_near_2 = abs(topo - altitude)
+            idx_2 = np.where(array_near_2 == array_near_2.min())
+            print(altitude-self.topo[idx[0][0]-3+idx_2[0][0],idx[1][0]-3+idx_2[1][0]])
+            self.index_site.append((idx[0][0]-3+idx_2[0][0],idx[1][0]-3+idx_2[1][0]))
 
 
     def get_array_simul(self):
@@ -117,8 +125,7 @@ class data_site():
 
             plt.savefig(f'Analyse_scatter_fit_{site[i]}_lowres.nosync.png', bbox_inches='tight')
 
-            # slope, intercept, r_value, p_value, std_err = stat.linregress(self.data_simul_3_site[i],df[f'T {site[i]}'])
-            # plt.plot(self.data_simul_3_site[i], intercept + slope * self.data_simul_3_site[i], 'r', label='fitted line')
+
     def plot(self):
         site = ['Fortress', 'junction', 'Nipika']
         df = pd.read_csv('/Users/olivier1/Documents/GitHub/Spade_intern/pluvio_data_analyse/Hourly_data.csv.nosync.csv', parse_dates=['Date'])
@@ -170,9 +177,10 @@ class data_site():
             self.read_data_site()
             # self.write_new_csv_hourly()
             self.get_site_index()
+            # self.get_altitude_similar()
             self.get_array_simul()
             self.get_time_temps_lenght()
-            # self.plot()
+            self.plot()
             self.scatter_plot()
         if self.data_aff == 'precipitation':
             self.read_data_site()
