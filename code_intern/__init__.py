@@ -46,5 +46,5 @@ if __name__ == '__main__':
     # print(tas_nc_file.variables)
     # plt_int.plot_graph(tas_nc_file,event=True,save=True).__call__()
 
-    Ana_data.data_site('Alldata.csv',tas_nc_file,Data_aff='temperature').__call__()
-    # crossec.cross_section('Alldata.csv',tas_nc_file).__call__()
+    # Ana_data.data_site('Alldata.csv',tas_nc_file,Data_aff='temperature').__call__()
+    crossec.cross_section('Alldata.csv',tas_nc_file).__call__()
