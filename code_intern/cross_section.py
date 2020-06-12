@@ -6,7 +6,7 @@ from mpl_toolkits.basemap import Basemap
 
 
 class cross_section():
-    def __init__(self, file_csv, data, **kwargs):
+    def __init__(self, file_csv, data):
         self.file = file_csv
         self.data = data
         self.position_site = [(50.82423333, -115.1972167), (50.785568, -115.160941),
@@ -52,6 +52,7 @@ class cross_section():
         for j in range(self.ndat):
             dist = np.sqrt((xx - xgc[j]) ** 2 + (yy - (ygc[j])) ** 2)
             I, J = np.where(dist == np.min(dist))
+
             self.data_aff['II'][j] = int(I)
             self.data_aff['JJ'][j] = int(J)
             self.data_aff['TOPO'][j] = self.topo[I, J]
@@ -73,6 +74,7 @@ class cross_section():
         plt.show()
 
     def __call__(self):
+
         self.get_domaine()
         self.get_line()
         self.plot()
