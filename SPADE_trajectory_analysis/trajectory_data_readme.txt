@@ -18,7 +18,7 @@ transect_distance.npy: x values along transect, easy for 1km data as there is on
 transect_boolean_mask.npy: full 1060x1060 array with Trye values along transect. Place onto 1060x1060 array to extract data along transect. Eg clipped_data_array = data[mask]. shape=[full grid 1060x1060]
 
 transect_lats / lons .npy: lats and lons along the transect. shape=[length of transect]
-    
+
 p_levels_hPa.npy: list of levels in hPa. shape=[number of levels]
 p_levels_rpn.npy: list of levels using rpn code, relates directly to p_levels_hPa. required as'ip1' to access rpn files. shape=[number of levels]
 
