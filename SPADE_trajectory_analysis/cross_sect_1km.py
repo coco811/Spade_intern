@@ -42,7 +42,7 @@ def intrp1d(varin, z, ztype, zref):
     varout=0
     if ztype == "Z":
         for k in range(nz):
-            if ((z[k].all() >= zref) and (not end)):
+            if ((z[k].any() >= zref) and (not end)):
                 varout = varin[k] - (varin[k] - varin[k - 1]) / (z[k] - z[k - 1]) * (z[k] - zref)
                 end = True
                 break
@@ -67,15 +67,15 @@ if __name__ == '__main__':
     nz = np.shape(Gz)[1]
     dZ = Zmax/nz
     distance= np.shape(Gz)[2]
+
     # Declaration des variables interpolee
-    T_interp = np.zeros((ndat, nz,distance))
-    print(np.shape(T_interp))
-    print(np.shape(temp))
-    Z_interp = np.linspace(0., Zmax, nz)
-    UU_interp = np.zeros((ndat, nz))
-    VV_interp = np.zeros((ndat, nz))
+    T_interp = np.zeros((nz,distance))
+    # print(np.shape(T_interp))
+    # print(np.shape(temp))
+    Z_interp = np.linspace(0,Zmax, nz)
+
     for k in range(nz):
         for i in range(distance):
-            T_interp[0,k,:] = intrp1d(temp[0,:,i], Gz[0,:,i], "Z", Z_interp[k])
-    # print(T_interp)
+            T_interp[k,i] = intrp1d(temp[0, :,i], Gz[0,:, i], "Z", Z_interp[k])
+    print(T_interp)
     # cross_section(temp,topo,Gz).plot()
