@@ -34,7 +34,39 @@ def get_mean_calc(data):
     with open('../Stock_array/Array_mean_temp', 'wb') as fp:
         pickle.dump(tempe_moy, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
-
+def intrp1d(varin,z,ztype,zref):
+    nz = len(z)
+    end = False
+    if ztype=="Z":
+        for k in range(nz):
+            if ((z[k]>=zref) and (not end)):
+                varout = varin[k]-(varin[k]-varin[k-1])/(z[k]-z[k-1])*(z[k]-zref)
+                end = True
+                break
+    if ztype=="P":
+        p = z
+        pref = zref
+        for k in range(nz):
+            if ((p[k]<=pref) and (not end)):
+                varout = varin[k]-(varin[k]-varin[k-1])/(p[k]-p[k-1])*(p[k]-pref)
+                end = True
+                break
+    return varout
+# ################# Pour interpoler sur Z, provient de xsect.py/wrf_utils.py de SEB #####################
+# GZ_array = GZ_array * 10 #en dam vers metres
+# Zmax = 6000. # La hauteur maximale de l'interpolation
+# dZ = 100. # L'épaisseur entre chaque niveaux Z
+# nz = int(Zmax/dZ)+1
+# #Declaration des variables interpolee
+# T_interp=np.zeros((ndat,nz))
+# Z_interp = np.linspace(0.,Zmax,nz)
+# UU_interp=np.zeros((ndat,nz))
+# VV_interp=np.zeros((ndat,nz))
+# for i in range(distance):
+#     for k in range(nz):
+#         T_interp[i,k]=intrp1d(TT_array[i,:],GZ_array[i,:],"Z",Z_interp[k])
+#         UU_interp[i,k]=intrp1d(UU_array[i,:],GZ_array[i,:],"Z",Z_interp[k])
+#         VV_interp[i,k]=intrp1d(VV_array[i,:],GZ_array[i,:],"Z",Z_interp[k])
 if __name__ == '__main__':
     "plot temps simulation"
     # get_precipitation_doc()
