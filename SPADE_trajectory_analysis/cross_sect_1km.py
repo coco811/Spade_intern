@@ -66,7 +66,8 @@ if __name__ == '__main__':
     UU_array=np.load('./Cross_section_data/Cross_section_460_1km/June_21_2019_storm/Variables/UU_array.npy')
     VV_array=np.load('./Cross_section_data/Cross_section_460_1km/June_21_2019_storm/Variables/VV_array.npy')
     T_inter_array=np.load('./T_interp.npy')
-
+    UU_inter_array = np.load('./UU_interp.npy')
+    VV_inter_array = np.load('./VV_interp.npy')
     ndat=np.shape(Gz)[0]
     Zmax = np.amax(Gz) # La hauteur maximale de l'interpolation
     dZ = 100
@@ -91,8 +92,8 @@ if __name__ == '__main__':
                 UU_interp[j,k, i] = intrp1d(UU_array[j,:, i], Gz[j,:, i], "Z", Z_interp[k])
                 VV_interp[j,k, i] = intrp1d(VV_array[j,:, i], Gz[j,:,i], "Z", Z_interp[k])
 
-    np.save('T_interp',T_interp[:,:310,:])
-    np.save('UU_inter', UU_interp[:, :310, :])
-    np.save('VV_interp',VV_interp[:,:310,:])
-    print(T_interp[:])
+    np.save('T_interp',T_interp[:,:311,:])
+    np.save('UU_interp', UU_interp[:, :311, :])
+    np.save('VV_interp',VV_interp[:,:311,:])
+
     # cross_section(temp,topo,Gz).plot()
